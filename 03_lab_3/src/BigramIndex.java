@@ -3,16 +3,14 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
- * Created by alex on 9/27/16.
- * This is a mixed class which might me useful all labs 1-3
- * It's an inverted index implementation
+ *
  */
-public class BiIndex {
+public class BigramIndex {
 
     private Map<String, List<Integer>> dictionary;
     private int scanned_words_count;
 
-    public BiIndex(){
+    public BigramIndex(){
         dictionary = new HashMap<>();
         getTokensFromAllFiles();
     }
@@ -46,10 +44,18 @@ public class BiIndex {
         }
         //you may want to improve this expression
         scanner.useDelimiter("[^A-Za-z]+");
+        String token = null;
+        String last_token = null;
         while(scanner.hasNext()){
-            String token = scanner.next().toLowerCase();
-            if(scanner.hasNext())
-                token += " " + scanner.next().toLowerCase();
+            if(last_token != null){
+                token = last_token;
+            }
+            else
+                token = scanner.next().toLowerCase();
+            if(scanner.hasNext()) {
+                last_token = scanner.next().toLowerCase();
+                token += " " + last_token;
+            }
             if(dictionary.containsKey(token)){ //&& !dictionary.get(token).contains(file_id)){
                 if(!dictionary.get(token).contains(file_id)){
                     dictionary.get(token).add(file_id);

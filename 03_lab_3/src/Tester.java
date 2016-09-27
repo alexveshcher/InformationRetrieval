@@ -4,10 +4,10 @@
 public class Tester {
 
     public static void main(String[] args) {
-        BiIndex index = new BiIndex();
+        BigramIndex index = new BigramIndex();
         System.out.println("Scanned words: " + index.getScannedWordsCount());
         System.out.println("Dictionary size: " + index.getDictionarySize());
-        System.out.println(index.findWord("likes it"));
-//        System.out.println(index.getDictionary());
+        System.out.println(index.findWord("title anna"));
+        System.out.println(index.getDictionary());
     }
 }
