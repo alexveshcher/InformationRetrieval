@@ -26,7 +26,7 @@ public class InvertedIndex {
     }
 
     public String findWord(String word){
-        String res = word+ ": " + dictionary.get(word).size();
+        String res = word+ ": " + dictionary.get(word);
         return res;
     }
 
@@ -48,9 +48,11 @@ public class InvertedIndex {
         scanner.useDelimiter("[^A-Za-z]+");
         while(scanner.hasNext()){
             String token = scanner.next().toLowerCase();
-            if(dictionary.containsKey(token) && !dictionary.get(token).contains(file_id)){
-                dictionary.get(token).add(file_id);
-                dictionary.put(token, dictionary.get(token));
+            if(dictionary.containsKey(token)){ //&& !dictionary.get(token).contains(file_id)){
+                if(!dictionary.get(token).contains(file_id)){
+                    dictionary.get(token).add(file_id);
+                    dictionary.put(token, dictionary.get(token));
+                }
             }
             else {
                 List<Integer> integers = new ArrayList<>();

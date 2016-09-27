@@ -7,6 +7,6 @@ public class Tester {
         InvertedIndex index = new InvertedIndex();
         System.out.println("Scanned words: " + index.getScannedWordsCount());
         System.out.println("Dictionary size: " + index.getDictionarySize());
-        System.out.println(index.findWord("in"));
+        System.out.println(index.findWord("america"));
     }
 }
