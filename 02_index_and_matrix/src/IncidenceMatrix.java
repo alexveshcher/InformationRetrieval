@@ -7,7 +7,7 @@ import java.util.*;
  * america: [0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0]
  */
 public class IncidenceMatrix {
-    private Map<String, List<Integer>> dictionary;
+    private Map<String, byte[]> dictionary;
     private List<String> files;
     private int scanned_words_count;
 
@@ -21,12 +21,15 @@ public class IncidenceMatrix {
         return scanned_words_count;
     }
 
-    public Map<String, List<Integer>> getDictionary() {
+    public Map<String, byte[]> getDictionary() {
         return dictionary;
     }
 
     public String findWord(String word){
-        String res = word+ ": " + dictionary.get(word);
+        String res = word+ ": ";// + dictionary.get(word);
+        for(int i = 0; i < files.size(); i++){
+            res+= dictionary.get(word)[i];
+        }
         return res;
     }
 
@@ -48,22 +51,12 @@ public class IncidenceMatrix {
         scanner.useDelimiter("[^A-Za-z]+");
         while(scanner.hasNext()){
             String token = scanner.next().toLowerCase();
-            if(dictionary.containsKey(token)){ //&& !dictionary.get(token).contains(file_id)){
-                if(!dictionary.get(token).contains(file_id)){
-                    dictionary.get(token).set(file_id,1);
-                    dictionary.put(token, dictionary.get(token));
-                }
+            if(!dictionary.containsKey(token)){
+                byte[] status = new byte[files.size()];
+                status[file_id] = 0x01;
+                dictionary.put(token,status);
             }
-            else {
-                List<Integer> integers = new ArrayList<>();
-                for(int i = 0; i < files.size(); i++){
-                    if(i == file_id)
-                        integers.add(1);
-                    else
-                        integers.add(0);
-                }
-                dictionary.put(token,integers);
-            }
+            dictionary.get(token)[file_id] = 0x01;
             scanned_words_count++;
         }
     }

@@ -47,7 +47,6 @@ public class InvertedIndex {
             if(dictionary.containsKey(token)){ //&& !dictionary.get(token).contains(file_id)){
                 if(!dictionary.get(token).contains(file_id)){
                     dictionary.get(token).add(file_id);
-                    dictionary.put(token, dictionary.get(token));
                 }
             }
             else {
