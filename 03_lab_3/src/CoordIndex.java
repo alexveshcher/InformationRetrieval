@@ -3,12 +3,12 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 
-public class BigramIndex {
+public class CoordIndex {
 
     private Map<String, List<Integer>> dictionary;
     private int scanned_words_count;
 
-    public BigramIndex(){
+    public CoordIndex(){
         dictionary = new HashMap<>();
         getTokensFromAllFiles();
     }

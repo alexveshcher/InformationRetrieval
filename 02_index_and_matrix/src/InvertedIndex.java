@@ -2,11 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-/**
- * Created by alex on 9/27/16.
- * This is a mixed class which might me useful all labs 1-3
- * It's an inverted index implementation
- */
+
 public class InvertedIndex {
 
     private Map<String, List<Integer>> dictionary;

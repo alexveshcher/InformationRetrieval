@@ -2,14 +2,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-
-public class BigramIndex {
-
+/**
+ * output example
+ * america: [0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0]
+ */
+public class IncidenceMatrix {
     private Map<String, List<Integer>> dictionary;
+    private List<String> files;
     private int scanned_words_count;
 
-    public BigramIndex(){
+    public IncidenceMatrix(){
         dictionary = new HashMap<>();
+        files = getFiles();
         getTokensFromAllFiles();
     }
 
@@ -42,27 +46,22 @@ public class BigramIndex {
         }
         //you may want to improve this expression
         scanner.useDelimiter("[^A-Za-z]+");
-        String token = null;
-        String last_token = null;
         while(scanner.hasNext()){
-            if(last_token != null){
-                token = last_token;
-            }
-            else
-                token = scanner.next().toLowerCase();
-            if(scanner.hasNext()) {
-                last_token = scanner.next().toLowerCase();
-                token += " " + last_token;
-            }
+            String token = scanner.next().toLowerCase();
             if(dictionary.containsKey(token)){ //&& !dictionary.get(token).contains(file_id)){
                 if(!dictionary.get(token).contains(file_id)){
-                    dictionary.get(token).add(file_id);
+                    dictionary.get(token).set(file_id,1);
                     dictionary.put(token, dictionary.get(token));
                 }
             }
             else {
                 List<Integer> integers = new ArrayList<>();
-                integers.add(file_id);
+                for(int i = 0; i < files.size(); i++){
+                    if(i == file_id)
+                        integers.add(1);
+                    else
+                        integers.add(0);
+                }
                 dictionary.put(token,integers);
             }
             scanned_words_count++;
@@ -85,7 +84,6 @@ public class BigramIndex {
      *  and implements void readTokensFromFile(String file_path, int file_id)
      */
     private void getTokensFromAllFiles(){
-        List<String> files = getFiles();
         for(int i = 0; i < files.size(); i++ ){
             readTokensFromFile("files/"+files.get(i),i);
         }
