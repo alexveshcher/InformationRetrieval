@@ -44,15 +44,13 @@ public class InvertedIndex {
         scanner.useDelimiter("[^A-Za-z]+");
         while(scanner.hasNext()){
             String token = scanner.next().toLowerCase();
-            if(dictionary.containsKey(token)){ //&& !dictionary.get(token).contains(file_id)){
-                if(!dictionary.get(token).contains(file_id)){
-                    dictionary.get(token).add(file_id);
-                }
-            }
-            else {
+            if(!dictionary.containsKey(token)){
                 List<Integer> integers = new ArrayList<>();
                 integers.add(file_id);
                 dictionary.put(token,integers);
+            }
+            else if(!dictionary.get(token).contains(file_id)){
+                dictionary.get(token).add(file_id);
             }
             scanned_words_count++;
         }
