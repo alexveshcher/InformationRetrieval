@@ -5,7 +5,7 @@ import java.util.*;
 
 public class InvertedIndex {
 
-    private Map<String, List<Integer>> dictionary;
+    private Map<String, Set<Integer>> dictionary;
     private int scanned_words_count;
 
     public InvertedIndex(){
@@ -15,10 +15,6 @@ public class InvertedIndex {
 
     public int getScannedWordsCount() {
         return scanned_words_count;
-    }
-
-    public Map<String, List<Integer>> getDictionary() {
-        return dictionary;
     }
 
     public String findWord(String word){
@@ -43,16 +39,15 @@ public class InvertedIndex {
         //you may want to improve this expression
         scanner.useDelimiter("[^A-Za-z]+");
         while(scanner.hasNext()){
-            String token = scanner.next().toLowerCase();
-            if(!dictionary.containsKey(token)){
-                List<Integer> integers = new ArrayList<>();
-                integers.add(file_id);
-                dictionary.put(token,integers);
-            }
-            else if(!dictionary.get(token).contains(file_id)){
-                dictionary.get(token).add(file_id);
-            }
             scanned_words_count++;
+            String token = scanner.next().toLowerCase();
+            if(dictionary.containsKey(token)){
+                dictionary.get(token).add(file_id);
+                continue;
+            }
+            Set<Integer> file_ids = new HashSet<>();
+            file_ids.add(file_id);
+            dictionary.put(token,file_ids);
         }
     }
 
