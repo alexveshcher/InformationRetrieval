@@ -57,12 +57,12 @@ public class InvertedIndex {
     }
 
     /** Get list of all file names */
-    private List<String> getFiles(){
-        List<String> files = new ArrayList<>();
+    private Map<Integer, String> getFiles(){
+        Map<Integer, String > files = new HashMap<>();
         File dir = new File("files/");
         String[] files_in_dir = dir.list();
-        for(String i : files_in_dir){
-            files.add(i);
+        for(int i = 0; i < files_in_dir.length; i++){
+            files.put(i,files_in_dir[i]);
         }
         return files;
     }
@@ -72,7 +72,7 @@ public class InvertedIndex {
      *  and implements void readTokensFromFile(String file_path, int file_id)
      */
     private void getTokensFromAllFiles(){
-        List<String> files = getFiles();
+        Map<Integer, String> files = getFiles();
         for(int i = 0; i < files.size(); i++ ){
             readTokensFromFile("files/"+files.get(i),i);
         }
