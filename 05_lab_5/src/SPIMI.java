@@ -7,8 +7,9 @@ import java.util.*;
 
 public class SPIMI {
     private String DIR = "files/";
-    private Map<String, Set<Integer>> dictionary;
+    private Map<String, List<Integer>> dictionary;
     private int scanned_words_count;
+    private int block_count;
 
     public SPIMI() {
         dictionary = new HashMap<>();
@@ -29,43 +30,13 @@ public class SPIMI {
     }
 
 
-    /**
-     * Scans specific file for tokens
-     */
-    private void readTokensFromFile(String file_path, int file_id) {
-        File file = new File(file_path);
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        //you may want to improve this expression
-        scanner.useDelimiter("[^A-Za-z]+");
-        while (scanner.hasNext()) {
-            scanned_words_count++;
-            String token = scanner.next().toLowerCase();
-            if (dictionary.containsKey(token)) {
-                dictionary.get(token).add(file_id);
-                continue;
-            }
-            Set<Integer> file_ids = new HashSet<>();
-            file_ids.add(file_id);
-            dictionary.put(token, file_ids);
-        }
-        writeBlockToDisk(dictionary, "output");
-    }
 
     /**
      * Get list of all file names
      */
-    private Map<Integer, String> getFiles() {
-        Map<Integer, String> files = new HashMap<>();
+    private List<String> getFiles() {
         File dir = new File(DIR);
-        String[] files_in_dir = dir.list();
-        for (int i = 0; i < files_in_dir.length; i++) {
-            files.put(i, files_in_dir[i]);
-        }
+        List<String> files = Arrays.asList(dir.list());
         return files;
     }
 
@@ -74,30 +45,79 @@ public class SPIMI {
      * and implements void readTokensFromFile(String file_path, int file_id)
      */
     private void getTokensFromAllFiles() {
-        Map<Integer, String> files = getFiles();
+        List<String> files = getFiles();
         for (int i = 0; i < files.size(); i++) {
-            readTokensFromFile(DIR + files.get(i), i);
+
+            File file = new File(DIR + files.get(i));
+            Scanner scanner = null;
+            try {
+                scanner = new Scanner(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            //you may want to improve this expression
+            scanner.useDelimiter("[^A-Za-z]+");
+
+
+            while (scanner.hasNext() /* and memory available*/) {
+                scanned_words_count++;
+                String token = scanner.next().toLowerCase();
+                if (dictionary.containsKey(token)) {
+                    if(!dictionary.get(token).contains(i)){
+                        dictionary.get(token).add(i);
+                    }
+                    continue;
+                }
+                List<Integer> file_ids = new ArrayList<>();
+                file_ids.add(i);
+                dictionary.put(token, file_ids);
+                if(Runtime.getRuntime().freeMemory() < 10){ //memory is full
+                    writeBlockToDisk(dictionary, "output" + block_count++);
+                    dictionary = new HashMap<>();
+                }
+            }
         }
+        writeBlockToDisk(dictionary, "output" + block_count++);
+        //readBlock("output0");
     }
 
-    private void writeBlockToDisk(Map<String, Set<Integer>> dictionary, String output_file) {
+    private void writeBlockToDisk(Map<String, List<Integer>> dictionary, String output_file) {
         try {
             FileWriter writer = null;
             writer = new FileWriter(output_file, true);
-
-
-        for (Map.Entry<String, Set<Integer>> entry : dictionary.entrySet()) {
+        for(Map.Entry<String, List<Integer>> entry : dictionary.entrySet()) {
             String key = entry.getKey();
-            Set<Integer> value = entry.getValue();
-            writer.write(key + "\n");
+            List<Integer> value = entry.getValue();
+            String res = key + " ";
+            for(int i : value){
+                res+= i + " ";
+            }
+            writer.write(res + "\n");
         }
-        writer.close();
-
-
-    } catch (IOException e) {
+            writer.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private void mergeOutput(){
+        for(int i = 0; i < block_count; i++){
+
+        }
+    }
+
+    private void readBlock(String file_name){
+        Scanner x = null;
+        try {
+            x = new Scanner(new File(file_name));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        while(x.hasNext()){
+            String a = x.next();
+            System.out.println(a);
+        }
+        x.close();
     }
 
 }
