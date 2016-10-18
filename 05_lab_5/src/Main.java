@@ -6,7 +6,7 @@ public class Main {
         SPIMI index = new SPIMI();
         System.out.println("Scanned words: " + index.getScannedWordsCount());
         System.out.println("Dictionary size: " + index.getDictionarySize());
-        System.out.println(index.findWord("america"));
+        System.out.println(index.findWord("paris"));
 
         long endTime   = System.currentTimeMillis();
         long totalTime = endTime - startTime;

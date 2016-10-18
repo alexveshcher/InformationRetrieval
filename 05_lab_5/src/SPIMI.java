@@ -7,9 +7,10 @@ import java.util.*;
 
 public class SPIMI {
     private String DIR = "files/";
+    private String BLOCK = "output/block";
     private Map<String, List<Integer>> dictionary;
     private int scanned_words_count;
-    private int block_count;
+    private int block_count = 0;
 
     public SPIMI() {
         dictionary = new HashMap<>();
@@ -63,7 +64,7 @@ public class SPIMI {
                 scanned_words_count++;
                 String token = scanner.next().toLowerCase();
                 if (dictionary.containsKey(token)) {
-                    if(!dictionary.get(token).contains(i)){
+                    if(dictionary.get(token).get(dictionary.get(token).size()-1) != i){//if(!dictionary.get(token).contains(i)){
                         dictionary.get(token).add(i);
                     }
                     continue;
@@ -71,14 +72,15 @@ public class SPIMI {
                 List<Integer> file_ids = new ArrayList<>();
                 file_ids.add(i);
                 dictionary.put(token, file_ids);
-                if(Runtime.getRuntime().freeMemory() < 10){ //memory is full
-                    writeBlockToDisk(dictionary, "output" + block_count++);
+                if(Runtime.getRuntime().freeMemory() < 1.5*1024*1024){ //memory is full
+                    writeBlockToDisk(dictionary, BLOCK + block_count++);
                     dictionary = new HashMap<>();
                 }
             }
         }
-        writeBlockToDisk(dictionary, "output" + block_count++);
+        writeBlockToDisk(dictionary, BLOCK + block_count++);
         //readBlock("output0");
+        mergeOutput();
     }
 
     private void writeBlockToDisk(Map<String, List<Integer>> dictionary, String output_file) {
@@ -102,7 +104,7 @@ public class SPIMI {
 
     private void mergeOutput(){
         for(int i = 0; i < block_count; i++){
-
+            readBlock(BLOCK+i);
         }
     }
 
@@ -115,7 +117,11 @@ public class SPIMI {
         }
         while(x.hasNext()){
             String a = x.next();
-            System.out.println(a);
+            List<Integer> b = new ArrayList<>();
+            while(x.hasNextInt()){
+                b.add(Integer.valueOf(x.next()));
+            }
+            System.out.println(a + " " +b);
         }
         x.close();
     }
