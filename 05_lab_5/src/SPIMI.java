@@ -80,7 +80,8 @@ public class SPIMI {
         }
         writeBlockToDisk(dictionary, BLOCK + block_count++);
         //readBlock("output0");
-        mergeOutput();
+        //mergeOutput();
+        mergeFiles();
     }
 
     private void writeBlockToDisk(Map<String, List<Integer>> dictionary, String output_file) {
@@ -104,10 +105,12 @@ public class SPIMI {
 
     private void mergeOutput(){
         for(int i = 0; i < block_count; i++){
-            readBlock(BLOCK+i);
+            //readBlock(BLOCK+i);
+            getBlock(BLOCK+i);
         }
     }
 
+    /** for testing purposes */
     private void readBlock(String file_name){
         Scanner x = null;
         try {
@@ -124,6 +127,44 @@ public class SPIMI {
             System.out.println(a + " " +b);
         }
         x.close();
+    }
+
+    private Map<String, List<Integer>> getBlock(String file_name){
+        Map<String, List<Integer>> block_dictionary = new HashMap<>();
+
+        Scanner x = null;
+        try {
+            x = new Scanner(new File(file_name));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        while(x.hasNext()){
+            String a = x.next();
+            List<Integer> b = new ArrayList<>();
+            block_dictionary.put(a, b);
+            while(x.hasNextInt()){
+                b.add(Integer.valueOf(x.next()));
+            }
+            System.out.println(a + " " +b);
+        }
+        x.close();
+
+        return block_dictionary;
+    }
+
+    private void mergeFiles(){
+        int n = block_count;
+        In[] streams = new In[n];
+        for(int i = 0; i < block_count; i++){
+            Scanner x = null;
+            try {
+                x = new Scanner(new File(BLOCK+i));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            streams[i] = new In(x);
+        }
+        Multiway.merge(streams);
     }
 
 }
